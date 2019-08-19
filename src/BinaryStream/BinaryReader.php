@@ -97,20 +97,22 @@ class BinaryReader
 
     /**
      * 读取字符串
+     * @param int $str_len
      * @return mixed
      * */
-    public function readString(){
-        return self::readUTFString();
+    public function readString(int $str_len = 0){
+        return self::readUTFString($str_len);
     }
 
     /**
      * 读取UTF字符
+     * @param int $str_len
      * @return string
      * */
-    public function readUTFString(){
-        $short = self::readShort();
+    public function readUTFString(int $str_len = 0){
+        $short_len = ($str_len ? $str_len : self::readShort());
         $this->readSequence .= $method = BinaryCode::a;
-        return $this->readBinary($method , $short);
+        return $this->readBinary($method , $short_len);
     }
 
     /**
