@@ -8,7 +8,6 @@
 
 namespace BinaryStream;
 
-
 class BinaryReader
 {
 
@@ -53,42 +52,62 @@ class BinaryReader
     }
 
     /**
-     * 读取16位数字 默认小端字节序
-     * @return mixed
+     * read a 16 byte integer
+     * @return int
      * */
-    public function readInt16(){
+    public function readInt16():int {
         $this->readSequence .= $method = $this->binary_model ? BinaryCode::v : BinaryCode::n;
         return $this->readBinary($method);
     }
 
     /**
-     * 读取16位数字 默认小端字节序
-     * @return mixed
+     * read a short
+     * @return int
      * */
-    public function readShort(){
+    public function readShort():int {
         return self::readInt16();
     }
 
     /**
-     * 读取32位数字 默认小端字节序
-     * @return mixed
+     * read a 32 byte integer
+     * @return int
      * */
-    public function readInt32(){
+    public function readInt32():int {
         $this->readSequence .= $method = $this->binary_model ? BinaryCode::V : BinaryCode::N;
         return $this->readBinary($method);
     }
 
     /**
-     * 读取64位数字 默认小端字节序
-     * @return mixed
+     * read a 64 byte integer
+     * @return float
      * */
-    public function readInt64(){
+    public function readInt64():float {
         $this->readSequence .= $method = $this->binary_model ? BinaryCode::J : BinaryCode::P;
         return $this->readBinary($method);
     }
 
+
     /**
-     * 读取单个字符
+     * read a float
+     * @return float
+     * */
+    public function readFloat():float {
+        $this->readSequence .= $method = BinaryCode::f;
+        return $this->readBinary($method);
+
+    }
+
+    /**
+     * read a float
+     * */
+    public function readDouble() {
+        $this->readSequence .= $method = BinaryCode::d;
+        return $this->readBinary($method);
+    }
+
+    /**
+     * read a char
+     * @return string
      * */
     public function readChar(){
         $this->readSequence .= $method = BinaryCode::a;
@@ -96,16 +115,16 @@ class BinaryReader
     }
 
     /**
-     * 读取字符串
+     * read string
      * @param int $str_len
-     * @return mixed
+     * @return string
      * */
     public function readString(int $str_len = 0){
         return self::readUTFString($str_len);
     }
 
     /**
-     * 读取UTF字符
+     * read utf string
      * @param int $str_len
      * @return string
      * */
@@ -116,12 +135,13 @@ class BinaryReader
     }
 
     /**
-     * 读取字节
+     * read byte
+     * @throws
      * @param string $method
      * @param int $len
      * @return string $data
      * */
-    private function readBinary(string $method,int $len = 0){
+    private function readBinary(string $method, int $len = 0){
 
         $binary_data = substr($this->read_stream, $this->pos, ($len ? $len : BinaryCode::$T[$method]));
         $this->pos += $len ? $len : BinaryCode::$T[$method];

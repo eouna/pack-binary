@@ -12,36 +12,37 @@ use BinaryStream\Exception\BinaryException;
 class BinaryWriter
 {
     /**
-     * 二进制读写模式
+     * binary write or read model
      * @var bool $binary_model
      * */
     private $binary_model = BinaryCode::LITTLE_ENDIAN;
 
     /**
-     * 二进制写文件
+     * buffer write stream
      * @var string $stream
      * */
     private $write_stream = '';
 
     /**
-     * 加包
-     * @var string $writeSequence
+     * buffer write sequence
+     * @var string $write_sequence
      * */
-    private $writeSequence = null;
+    private $write_sequence = null;
 
     /**
-     * 加包顺序
+     * record buffer write sequence
      * @var string $writeSequence
      * */
     private $record_sequence = null;
 
     /**
-     * 存储地址
+     * store path string
+     * @var string $store_path
      * */
     private $store_path = '';
 
     /**
-     * 初始化
+     * initial store path
      * @param string $store_path
      * */
     public function __construct(string $store_path = ''){
@@ -49,7 +50,7 @@ class BinaryWriter
     }
 
     /**
-     * 设置短整型 默认小端字节序
+     * write a 16 byte integer
      * @param int $integer
      * @throws BinaryException
      * */
@@ -58,13 +59,13 @@ class BinaryWriter
         if($integer > 0x7FFF || $integer < -0x8000 )
             throw new BinaryException(BinaryException::SHORT_VALUE_EXCEED_LIMIT);
 
-        $this->writeSequence = $this->binary_model ? BinaryCode::$N[BinaryCode::v] : BinaryCode::$N[BinaryCode::n];
+        $this->write_sequence = $this->binary_model ? BinaryCode::$N[BinaryCode::v] : BinaryCode::$N[BinaryCode::n];
         $this->write_stream .= $this->write($integer);
-        $this->record_sequence .= $this->writeSequence;
+        $this->record_sequence .= $this->write_sequence;
     }
 
     /**
-     * 设置短整型 默认小端字节序
+     * write a short integer
      * @throws BinaryException
      * @param int $integer
      * */
@@ -77,7 +78,7 @@ class BinaryWriter
     }
 
     /**
-     * 设置32位数字 默认小端字节序
+     * write a 32 byte integer
      * @throws BinaryException
      * @param int $integer
      * */
@@ -86,13 +87,13 @@ class BinaryWriter
         if($integer > 0x7FFFFFFF || $integer < -0x80000000 )
             throw new BinaryException(BinaryException::INT32_VALUE_EXCEED_LIMIT);
 
-        $this->writeSequence = $this->binary_model ? BinaryCode::$N[BinaryCode::V] : BinaryCode::$N[BinaryCode::N];
-        $this->record_sequence .= $this->writeSequence;
+        $this->write_sequence = $this->binary_model ? BinaryCode::$N[BinaryCode::V] : BinaryCode::$N[BinaryCode::N];
+        $this->record_sequence .= $this->write_sequence;
         $this->write_stream .= $this->write($integer);
     }
 
     /**
-     * 设置64位数字 默认小端字节序
+     * write a 64 byte integer
      * @param float $integer
      * @throws
      * */
@@ -104,23 +105,49 @@ class BinaryWriter
         if(PHP_INT_SIZE * 8 != 64)
             throw new BinaryException(BinaryException::NOT_AVAILABLE_64BITE_FORMAT);
 
-        $this->writeSequence = $this->binary_model ? BinaryCode::$N[BinaryCode::J] : BinaryCode::$N[BinaryCode::P];
-        $this->record_sequence .= $this->writeSequence;
+        $this->write_sequence = $this->binary_model ? BinaryCode::$N[BinaryCode::J] : BinaryCode::$N[BinaryCode::P];
+        $this->record_sequence .= $this->write_sequence;
         $this->write_stream .= $this->write($integer);
     }
 
     /**
-     * 设置字符
+     * write a float
+     * @param float $float
+     * @throws
+     * */
+    public function writeFloat(float $float){
+        $this->write_sequence = BinaryCode::$N[BinaryCode::f];
+        $this->record_sequence .= $this->write_sequence;
+        $this->write_stream .= $this->write($float);
+    }
+
+    /**
+     * write a float
+     * @param double $double
+     * @throws
+     * */
+    public function writeDouble($double){
+
+        if(!is_double($double))
+            throw new BinaryException(BinaryException::NOT_A_DOUBLE_VARIABLE);
+
+        $this->write_sequence = BinaryCode::$N[BinaryCode::d];
+        $this->record_sequence .= $this->write_sequence;
+        $this->write_stream .= $this->write($double);
+    }
+
+    /**
+     * write a char
      * @param string $char
      * */
     public function writeChar(string $char){
-        $this->writeSequence = BinaryCode::$N[BinaryCode::a];
-        $this->record_sequence .= $this->writeSequence;
+        $this->write_sequence = BinaryCode::$N[BinaryCode::a];
+        $this->record_sequence .= $this->write_sequence;
         $this->write_stream .= $this->write($char{0});
     }
 
     /**
-     * 设置字符窜
+     * write string
      * @throws
      * @param string $string
      * */
@@ -129,7 +156,7 @@ class BinaryWriter
     }
 
     /**
-     * 设置UTF字符
+     * write utf string
      * @param string $uftString
      * @throws BinaryException
      * */
@@ -138,18 +165,18 @@ class BinaryWriter
         $string_len = strlen($uftString);
         self::writeShort($string_len);
 
-        $this->writeSequence = BinaryCode::$N[BinaryCode::a] . "*";
-        $this->record_sequence .= $this->writeSequence;
+        $this->write_sequence = BinaryCode::$N[BinaryCode::a] . "*";
+        $this->record_sequence .= $this->write_sequence;
         $this->write_stream .= $this->write($uftString);
     }
 
     /**
-     * 返回写的字符串
+     * return pack binary string
      * @param $data
      * @return string
      * */
     protected function write($data){
-        return pack($this->writeSequence, $data);
+        return pack($this->write_sequence, $data);
     }
 
     /**
@@ -158,7 +185,7 @@ class BinaryWriter
     public function store(){
 
         if(empty($this->store_path) && !empty($this->write_stream))
-            return file_put_contents(__DIR__, $this->write_stream);
+            return file_put_contents(__DIR__ . '/out.dat', $this->write_stream);
 
         $base_dir = dirname($this->store_path);
         if(!is_dir($base_dir))
@@ -188,6 +215,6 @@ class BinaryWriter
      */
     public function getWriteSequence(): string{
 
-        return $this->writeSequence;
+        return $this->write_sequence;
     }
 }
