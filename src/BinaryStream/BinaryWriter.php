@@ -15,7 +15,7 @@ class BinaryWriter
      * binary write or read model
      * @var bool $binary_model
      * */
-    private $binary_model = BinaryCode::LITTLE_ENDIAN;
+    private $binary_model = BinaryCode::BIG_ENDIAN;
 
     /**
      * buffer write stream
@@ -118,7 +118,7 @@ class BinaryWriter
     public function writeFloat(float $float){
         $this->write_sequence = BinaryCode::$N[BinaryCode::f];
         $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= $this->write($float);
+        $this->write_stream .= strrev($this->write($float));
     }
 
     /**
@@ -133,7 +133,7 @@ class BinaryWriter
 
         $this->write_sequence = BinaryCode::$N[BinaryCode::d];
         $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= $this->write($double);
+        $this->write_stream .= strrev($this->write($double));
     }
 
     /**

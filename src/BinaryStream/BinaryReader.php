@@ -15,7 +15,7 @@ class BinaryReader
      * 二进制读写模式
      * @var bool $binary_model
      * */
-    private $binary_model = BinaryCode::LITTLE_ENDIAN;
+    private $binary_model = BinaryCode::BIG_ENDIAN;
 
     /**
      * 二进制读文件
@@ -144,6 +144,10 @@ class BinaryReader
     private function readBinary(string $method, int $len = 0){
 
         $binary_data = substr($this->read_stream, $this->pos, ($len ? $len : BinaryCode::$T[$method]));
+
+        if($method == BinaryCode::d || $method == BinaryCode::f)
+            $binary_data = strrev($binary_data);
+
         $this->pos += $len ? $len : BinaryCode::$T[$method];
         $binary_data = unpack(BinaryCode::$N[$method] . ($len != 0 ? $len : ''), $binary_data);
 
