@@ -12,31 +12,31 @@ class BinaryReader
 {
 
     /**
-     * 二进制读写模式
+     * binary reader model
      * @var bool $binary_model
      * */
     private $binary_model = BinaryCode::BIG_ENDIAN;
 
     /**
-     * 二进制读文件
+     * read stream
      * @var string $stream
      * */
     private $read_stream = '';
 
     /**
-     * 解包顺序
+     * unpack binary sequence
      * @var string $readSequence
      * */
     private $readSequence = null;
 
     /**
-     * 解析指针
+     * decode pos
      * @var int $pos
      * */
     private $pos = 0;
 
     /**
-     * 初始化
+     * handle binary string
      * @param string $read_stream
      * */
     public function __construct(string $read_stream){
