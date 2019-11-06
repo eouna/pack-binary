@@ -9,10 +9,13 @@
 use BinaryStream\Exception\BinaryException;
 use BinaryStream\BinaryWriter;
 use BinaryStream\BinaryReader;
+use BinaryStream\BinaryCode;
+
 require_once __DIR__ . "/../autoload.php";
 
 $file_name = __DIR__ . "/binary/buffer.dat";    //store binary file path
 $writer = new BinaryWriter($file_name);
+$writer->setBinaryModel(BinaryCode::BIG_ENDIAN);
 try{
 
     $writer->writeUTFString("it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! ");
@@ -24,7 +27,10 @@ try{
     $writer->writeDouble(148.3243413243132134343213244313132);
     $writer->writeChar("s");
     $write_sequence = $writer->store();
+    //$write_sequence = $writer->store(FILE_APPEND | LOCK_EX);
+
     var_dump($writer->getWriteStream());        //get binary stream
+    var_dump($writer->getRecordSequence());     //get encode proceed string
 
     $reader = new BinaryReader($writer->getWriteStream());
     $res[] = $reader->readUTFString();

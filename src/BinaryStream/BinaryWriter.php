@@ -50,6 +50,14 @@ class BinaryWriter
     }
 
     /**
+     * @param bool binary_model
+     */
+    public function setBinaryModel(bool $binary_model){
+
+        $this->binary_model = $binary_model;
+    }
+
+    /**
      * write a 16 byte integer
      * @param int $integer
      * @throws BinaryException
@@ -189,18 +197,19 @@ class BinaryWriter
 
     /**
      * save binary string to file
+     * @param int $write_model
      * @return int | bool
      * */
-    public function store(){
+    public function store(int $write_model = FILE_BINARY){
 
         if(empty($this->store_path) && !empty($this->write_stream))
-            return file_put_contents(__DIR__ . '/out.dat', $this->write_stream);
+            return file_put_contents(__DIR__ . '/out.dat', $this->write_stream, $write_model);
 
         $base_dir = dirname($this->store_path);
         if(!is_dir($base_dir))
             mkdir($base_dir, 655, true);
 
-        return file_put_contents($this->store_path, $this->write_stream);
+        return file_put_contents($this->store_path, $this->write_stream, $write_model);
     }
 
     /**
@@ -217,13 +226,5 @@ class BinaryWriter
     public function getWriteStream(): string{
 
         return $this->write_stream;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWriteSequence(): string{
-
-        return $this->write_sequence;
     }
 }
