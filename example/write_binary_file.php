@@ -8,20 +8,35 @@
 
 use BinaryStream\Exception\BinaryException;
 use BinaryStream\BinaryWriter;
+use BinaryStream\BinaryReader;
 require_once __DIR__ . "/../autoload.php";
 
-$file_name = __DIR__ . "/binary/buffer.dat";
+$file_name = __DIR__ . "/binary/buffer.dat";    //store binary file path
 $writer = new BinaryWriter($file_name);
 try{
-    $writer->writeShort(((2 << 14) - 1));
-    $writer->writeInt16(((2 << 14) - 1));
-    $writer->writeInt32(((-1) * (2 << 30) - 1));
-    $writer->writeFloat(.12345678);
-    $writer->writeDouble(.123456789123456);
-    $writer->writeChar("H");
-    $writer->writeString("Hello World!");
-    $writer->writeUTFString("你好！");
+
+    $writer->writeUTFString("it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! ");
+    $writer->writeUTFString("");
+    $writer->writeInt32(-90);
+    $writer->writeDouble(157);
+    $writer->writeDouble(800);
+    $writer->writeFloat(3.88511321334343434324443324321);
+    $writer->writeDouble(148.3243413243132134343213244313132);
+    $writer->writeChar("s");
     $write_sequence = $writer->store();
+    var_dump($writer->getWriteStream());        //get binary stream
+
+    $reader = new BinaryReader($writer->getWriteStream());
+    $res[] = $reader->readUTFString();
+    $res[] = $reader->readUTFString();
+    $res[] = $reader->readInt32();
+    $res[] = $reader->readDouble();
+    $res[] = $reader->readDouble();
+    $res[] = $reader->readFloat();
+    $res[] = $reader->readDouble();
+    $res[] = $reader->readChar();
+
+    var_dump($res);
 }catch (BinaryException $exception){
     var_dump($exception->getMessage());
 }

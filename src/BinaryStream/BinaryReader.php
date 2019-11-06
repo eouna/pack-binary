@@ -38,15 +38,16 @@ class BinaryReader
     /**
      * handle binary string
      * @param string $read_stream
-     * */
+     */
     public function __construct(string $read_stream){
+
         $this->read_stream = $read_stream;
     }
 
     /**
      * @param bool binary_model
      */
-    public function setBinaryModel(bool $binary_model): void{
+    public function setBinaryModel(bool $binary_model){
 
         $this->binary_model = $binary_model;
     }
@@ -55,7 +56,8 @@ class BinaryReader
      * read a 16 byte integer
      * @return int
      * */
-    public function readInt16():int {
+    public function readInt16(): int{
+
         $this->readSequence .= $method = $this->binary_model ? BinaryCode::v : BinaryCode::n;
         return $this->readBinary($method);
     }
@@ -64,7 +66,8 @@ class BinaryReader
      * read a short
      * @return int
      * */
-    public function readShort():int {
+    public function readShort(): int{
+
         return self::readInt16();
     }
 
@@ -72,7 +75,8 @@ class BinaryReader
      * read a 32 byte integer
      * @return int
      * */
-    public function readInt32():int {
+    public function readInt32(): int{
+
         $this->readSequence .= $method = $this->binary_model ? BinaryCode::V : BinaryCode::N;
         return $this->readBinary($method);
     }
@@ -81,7 +85,8 @@ class BinaryReader
      * read a 64 byte integer
      * @return float
      * */
-    public function readInt64():float {
+    public function readInt64(): float{
+
         $this->readSequence .= $method = $this->binary_model ? BinaryCode::J : BinaryCode::P;
         return $this->readBinary($method);
     }
@@ -91,7 +96,8 @@ class BinaryReader
      * read a float
      * @return float
      * */
-    public function readFloat():float {
+    public function readFloat(): float{
+
         $this->readSequence .= $method = BinaryCode::f;
         return $this->readBinary($method);
 
@@ -100,7 +106,8 @@ class BinaryReader
     /**
      * read a float
      * */
-    public function readDouble() {
+    public function readDouble(){
+
         $this->readSequence .= $method = BinaryCode::d;
         return $this->readBinary($method);
     }
@@ -110,6 +117,7 @@ class BinaryReader
      * @return string
      * */
     public function readChar(){
+
         $this->readSequence .= $method = BinaryCode::a;
         return $this->readBinary($method);
     }
@@ -120,6 +128,7 @@ class BinaryReader
      * @return string
      * */
     public function readString(int $str_len = 0){
+
         return self::readUTFString($str_len);
     }
 
@@ -129,23 +138,24 @@ class BinaryReader
      * @return string
      * */
     public function readUTFString(int $str_len = 0){
+
         $short_len = ($str_len ? $str_len : self::readShort());
         $this->readSequence .= $method = BinaryCode::a;
-        return $this->readBinary($method , $short_len);
+        return $this->readBinary($method, $short_len);
     }
 
     /**
      * read byte
-     * @throws
      * @param string $method
      * @param int $len
      * @return string $data
-     * */
+     * *@throws
+     */
     private function readBinary(string $method, int $len = 0){
 
         $binary_data = substr($this->read_stream, $this->pos, ($len ? $len : BinaryCode::$T[$method]));
 
-        if($method == BinaryCode::d || $method == BinaryCode::f)
+        if ($method == BinaryCode::d || $method == BinaryCode::f)
             $binary_data = strrev($binary_data);
 
         $this->pos += $len ? $len : BinaryCode::$T[$method];

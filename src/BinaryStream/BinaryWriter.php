@@ -116,6 +116,10 @@ class BinaryWriter
      * @throws
      * */
     public function writeFloat(float $float){
+
+        if($float < -3.4e+38 || $float > 3.4e+38)
+            throw new BinaryException(BinaryException::NOT_A_FLOAT_VARIABLE);
+
         $this->write_sequence = BinaryCode::$N[BinaryCode::f];
         $this->record_sequence .= $this->write_sequence;
         $this->write_stream .= strrev($this->write($float));
@@ -128,7 +132,7 @@ class BinaryWriter
      * */
     public function writeDouble($double){
 
-        if(!is_double($double))
+        if($double < -1.7E-308 || $double > 1.7E+308)
             throw new BinaryException(BinaryException::NOT_A_DOUBLE_VARIABLE);
 
         $this->write_sequence = BinaryCode::$N[BinaryCode::d];
@@ -141,6 +145,7 @@ class BinaryWriter
      * @param string $char
      * */
     public function writeChar(string $char){
+
         $this->write_sequence = BinaryCode::$N[BinaryCode::a];
         $this->record_sequence .= $this->write_sequence;
         $this->write_stream .= $this->write($char{0});
@@ -152,22 +157,24 @@ class BinaryWriter
      * @param string $string
      * */
     public function writeString(string $string){
+
         self::writeUTFString($string);
     }
 
     /**
      * write utf string
-     * @param string $uftString
+     * @param string $utfString
      * @throws BinaryException
      * */
-    public function writeUTFString(string $uftString){
+    public function writeUTFString(string $utfString){
 
-        $string_len = strlen($uftString);
+        $string_len = strlen($utfString);
+        if($string_len == 0){$string_len = 1; $utfString = ' ';}
         self::writeShort($string_len);
 
         $this->write_sequence = BinaryCode::$N[BinaryCode::a] . "*";
         $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= $this->write($uftString);
+        $this->write_stream .= $this->write($utfString);
     }
 
     /**
@@ -176,11 +183,13 @@ class BinaryWriter
      * @return string
      * */
     protected function write($data){
+
         return pack($this->write_sequence, $data);
     }
 
     /**
      * save binary string to file
+     * @return int | bool
      * */
     public function store(){
 
