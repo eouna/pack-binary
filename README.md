@@ -52,5 +52,5 @@ Binary Stream Packager - a tools to handle binary data
     ````
 
 - #### How To Use It
-    <p style = "color: red;">use **"*composer require eouna/pack-binary*"** to install this package</p>
+    <p style = "color: red;">use ***composer require eouna/pack-binary*** to install this package</p>
 
