@@ -30,7 +30,7 @@ Binary Stream Packager - a tools to handle binary data
     ````php
        $writer->store(FILE_APPEND);
       //or 
-      $writer->store(FILE_TEXT;
+      $writer->store(FILE_TEXT);
       //or
       $writer->store(FILE_APPEND | LOCK_EX);
     `````
