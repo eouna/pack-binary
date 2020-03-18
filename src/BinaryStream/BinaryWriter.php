@@ -9,52 +9,77 @@
 namespace BinaryStream;
 use BinaryStream\Exception\BinaryException;
 
-class BinaryWriter
+class BinaryWriter implements StreamWriter
 {
     /**
      * binary write or read model
-     * @var bool $binary_model
+     * @var bool $binaryModel
      * */
-    private $binary_model = BinaryCode::BIG_ENDIAN;
+    private $binaryModel = BinaryCode::BIG_ENDIAN;
 
     /**
      * buffer write stream
      * @var string $stream
      * */
-    private $write_stream = '';
+    private $writeStream = '';
 
     /**
      * buffer write sequence
-     * @var string $write_sequence
+     * @var string $writeSequence
      * */
-    private $write_sequence = null;
+    private $writeSequence = null;
 
     /**
      * record buffer write sequence
      * @var string $writeSequence
      * */
-    private $record_sequence = null;
+    private $recordSequence = null;
 
     /**
      * store path string
-     * @var string $store_path
+     * @var string $storePath
      * */
-    private $store_path = '';
+    private $storePath = '';
 
     /**
      * initial store path
-     * @param string $store_path
+     * @param string $storePath
      * */
-    public function __construct(string $store_path = ''){
-        $this->store_path = $store_path;
+    public function __construct(string $storePath = ''){
+        $this->storePath = $storePath;
     }
 
     /**
-     * @param bool binary_model
+     * @param bool binaryModel
      */
-    public function setBinaryModel(bool $binary_model){
+    public function setBinaryModel(bool $binaryModel){
 
-        $this->binary_model = $binary_model;
+        $this->binaryModel = $binaryModel;
+    }
+
+    /**
+     * @param $byte
+     * @throws BinaryException
+     */
+    public function writeByte($byte){
+
+        if($byte > 0x7FFF)
+            throw new BinaryException(BinaryException::BYTE_VALUE_EXCEED_LIMIT);
+
+        $this->writeSequence = BinaryCode::$N[BinaryCode::C];
+        $this->writeStream .= $this->write($byte);
+        $this->recordSequence .= $this->writeSequence;
+    }
+
+    /**
+     * @param StreamWriter $byteWriter
+     */
+    public function writeByteObject(StreamWriter $byteWriter){
+
+        if($byteWriter instanceof StreamWriter){
+            $this->writeStream .= $byteWriter->getWriteStream();
+            $this->recordSequence .= $byteWriter->getRecordSequence();
+        }
     }
 
     /**
@@ -67,9 +92,9 @@ class BinaryWriter
         if($integer > 0x7FFF || $integer < -0x8000 )
             throw new BinaryException(BinaryException::SHORT_VALUE_EXCEED_LIMIT);
 
-        $this->write_sequence = $this->binary_model ? BinaryCode::$N[BinaryCode::v] : BinaryCode::$N[BinaryCode::n];
-        $this->write_stream .= $this->write($integer);
-        $this->record_sequence .= $this->write_sequence;
+        $this->writeSequence = $this->binaryModel ? BinaryCode::$N[BinaryCode::v] : BinaryCode::$N[BinaryCode::n];
+        $this->writeStream .= $this->write($integer);
+        $this->recordSequence .= $this->writeSequence;
     }
 
     /**
@@ -95,9 +120,9 @@ class BinaryWriter
         if($integer > 0x7FFFFFFF || $integer < -0x80000000 )
             throw new BinaryException(BinaryException::INT32_VALUE_EXCEED_LIMIT);
 
-        $this->write_sequence = $this->binary_model ? BinaryCode::$N[BinaryCode::V] : BinaryCode::$N[BinaryCode::N];
-        $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= $this->write($integer);
+        $this->writeSequence = $this->binaryModel ? BinaryCode::$N[BinaryCode::V] : BinaryCode::$N[BinaryCode::N];
+        $this->recordSequence .= $this->writeSequence;
+        $this->writeStream .= $this->write($integer);
     }
 
     /**
@@ -113,9 +138,9 @@ class BinaryWriter
         if(PHP_INT_SIZE * 8 != 64)
             throw new BinaryException(BinaryException::NOT_AVAILABLE_64BITE_FORMAT);
 
-        $this->write_sequence = $this->binary_model ? BinaryCode::$N[BinaryCode::J] : BinaryCode::$N[BinaryCode::P];
-        $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= $this->write($integer);
+        $this->writeSequence = $this->binaryModel ? BinaryCode::$N[BinaryCode::J] : BinaryCode::$N[BinaryCode::P];
+        $this->recordSequence .= $this->writeSequence;
+        $this->writeStream .= $this->write($integer);
     }
 
     /**
@@ -128,9 +153,9 @@ class BinaryWriter
         if($float < -3.4e+38 || $float > 3.4e+38)
             throw new BinaryException(BinaryException::NOT_A_FLOAT_VARIABLE);
 
-        $this->write_sequence = BinaryCode::$N[BinaryCode::f];
-        $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= strrev($this->write($float));
+        $this->writeSequence = BinaryCode::$N[BinaryCode::f];
+        $this->recordSequence .= $this->writeSequence;
+        $this->writeStream .= strrev($this->write($float));
     }
 
     /**
@@ -143,9 +168,9 @@ class BinaryWriter
         if($double < -1.7E-308 || $double > 1.7E+308)
             throw new BinaryException(BinaryException::NOT_A_DOUBLE_VARIABLE);
 
-        $this->write_sequence = BinaryCode::$N[BinaryCode::d];
-        $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= strrev($this->write($double));
+        $this->writeSequence = BinaryCode::$N[BinaryCode::d];
+        $this->recordSequence .= $this->writeSequence;
+        $this->writeStream .= strrev($this->write($double));
     }
 
     /**
@@ -154,9 +179,9 @@ class BinaryWriter
      * */
     public function writeChar(string $char){
 
-        $this->write_sequence = BinaryCode::$N[BinaryCode::a];
-        $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= $this->write($char{0});
+        $this->writeSequence = BinaryCode::$N[BinaryCode::a];
+        $this->recordSequence .= $this->writeSequence;
+        $this->writeStream .= $this->write($char{0});
     }
 
     /**
@@ -176,13 +201,13 @@ class BinaryWriter
      * */
     public function writeUTFString(string $utfString){
 
-        $string_len = strlen($utfString);
-        if($string_len == 0){$string_len = 1; $utfString = ' ';}
-        self::writeShort($string_len);
+        $stringLen = strlen($utfString);
+        if($stringLen == 0){$stringLen = 1; $utfString = ' ';}
+        self::writeShort($stringLen);
 
-        $this->write_sequence = BinaryCode::$N[BinaryCode::a] . "*";
-        $this->record_sequence .= $this->write_sequence;
-        $this->write_stream .= $this->write($utfString);
+        $this->writeSequence = BinaryCode::$N[BinaryCode::a] . "*";
+        $this->recordSequence .= $this->writeSequence;
+        $this->writeStream .= $this->write($utfString);
     }
 
     /**
@@ -190,26 +215,26 @@ class BinaryWriter
      * @param $data
      * @return string
      * */
-    protected function write($data){
+    public function write($data){
 
-        return pack($this->write_sequence, $data);
+        return pack($this->writeSequence, $data);
     }
 
     /**
      * save binary string to file
-     * @param int $write_model
+     * @param int $writeModel
      * @return int | bool
-     * */
-    public function store(int $write_model = FILE_BINARY){
+     */
+    public function store(int $writeModel = FILE_BINARY){
 
-        if(empty($this->store_path) && !empty($this->write_stream))
-            return file_put_contents(__DIR__ . '/out.dat', $this->write_stream, $write_model);
+        if(empty($this->storePath) && !empty($this->writeStream))
+            return file_put_contents(__DIR__ . '/out.dat', $this->writeStream, $writeModel);
 
-        $base_dir = dirname($this->store_path);
-        if(!is_dir($base_dir))
-            mkdir($base_dir, 655, true);
+        $baseDir = dirname($this->storePath);
+        if(!is_dir($baseDir))
+            mkdir($baseDir, 655, true);
 
-        return file_put_contents($this->store_path, $this->write_stream, $write_model);
+        return file_put_contents($this->storePath, $this->writeStream, $writeModel);
     }
 
     /**
@@ -217,7 +242,7 @@ class BinaryWriter
      */
     public function getRecordSequence(): string{
 
-        return $this->record_sequence;
+        return $this->recordSequence;
     }
 
     /**
@@ -225,6 +250,6 @@ class BinaryWriter
      */
     public function getWriteStream(): string{
 
-        return $this->write_stream;
+        return $this->writeStream;
     }
 }
