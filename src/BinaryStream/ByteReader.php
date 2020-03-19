@@ -9,7 +9,7 @@
 namespace BinaryStream;
 
 
-class ByteReader
+class ByteReader implements IByteReader
 {
 
     const BYTE_BIT = 8;
@@ -46,12 +46,15 @@ class ByteReader
      * ascii code to char string
      * @return array
      */
-    public function readByteString() {
+    public function readByteString()
+    {
         $binaryReader = new BinaryReader($this->readStream);
         $byteString = $binaryReader->readUTFString();
+
         array_map(function ($byte) use (&$bytesArray) {
             $bytesArray[] = $this->read($byte, self::BYTE_BIT);
         }, str_split($byteString));
+
         $this->pos += strlen($byteString) + 1;
         return $bytesArray;
     }
@@ -59,48 +62,54 @@ class ByteReader
     /**
      * @return int
      */
-    public function readByte(){
-        $byte = substr($this->readStream, $this->pos, BinaryCode::$T[BinaryCode::C]);
-        $this->pos += BinaryCode::$T[BinaryCode::C];
-        $this->recordSequence .= BinaryCode::$N[BinaryCode::C] . BinaryCode::$T[BinaryCode::S];
-        return $this->read($byte, self::BYTE_BIT);
+    public function readByte()
+    {
+        return $this->read(self::BYTE_BIT, BinaryCode::$T[BinaryCode::C]);
     }
 
     /**
      * @return int
      */
-    public function readShortToByte(){
+    public function readShortToByte()
+    {
         return $this->readInt16ToByte();
     }
 
     /**
      * @return int
      */
-    public function readInt16ToByte(){
-        $byte = substr($this->readStream, $this->pos, BinaryCode::$T[BinaryCode::S]);
-        $this->pos += BinaryCode::$T[BinaryCode::S];
-        $this->recordSequence .= BinaryCode::$N[BinaryCode::C] . BinaryCode::$T[BinaryCode::S];
-        return $this->read($byte, self::SHORT_BIT);
+    public function readInt16ToByte()
+    {
+        return $this->read(self::SHORT_BIT, BinaryCode::$T[BinaryCode::S]);
     }
 
     /**
      * @return int
      */
-    public function readInt32ToByte(){
-        $byte = substr($this->readStream, $this->pos, BinaryCode::$T[BinaryCode::V]);
-        $this->pos += BinaryCode::$T[BinaryCode::V];
-        $this->recordSequence .= BinaryCode::$N[BinaryCode::C] . BinaryCode::$T[BinaryCode::V];
-        return $this->read($byte, self::INT32_BIT);
+    public function readInt32ToByte()
+    {
+        return $this->read(self::INT32_BIT, BinaryCode::$T[BinaryCode::V]);
     }
 
     /**
      * @return int
      */
-    public function readInt64ToByte(){
-        $byte = substr($this->readStream, $this->pos, BinaryCode::$T[BinaryCode::Q]);
-        $this->pos += BinaryCode::$T[BinaryCode::Q];
-        $this->recordSequence .= BinaryCode::$N[BinaryCode::C] . BinaryCode::$T[BinaryCode::Q];
-        return $this->read($byte, self::INT64_BIT);
+    public function readInt64ToByte()
+    {
+        return $this->read(self::INT64_BIT, BinaryCode::$T[BinaryCode::Q]);
+    }
+
+    /**
+     * @param mixed $method
+     * @param $len
+     * @return mixed
+     */
+    public function read($method, int $len = self::BYTE_BIT)
+    {
+        $bytes = substr($this->readStream, $this->pos, $len);
+        $this->pos += $len;
+        $this->recordSequence .= BinaryCode::$N[BinaryCode::C] . $len;
+        return $this->byteReader($bytes, $method);
     }
 
     /**
@@ -109,16 +118,18 @@ class ByteReader
      * @param int $position
      * @return int
      */
-    protected function read($bytes, int $bit, $position = 0){
+    public function byteReader($bytes, int $bit, $position = 0)
+    {
         $val = $i = 0;
         !is_string($bytes) ?: $bytes = str_split($bytes);
-        if($bit % 8 == 0 && is_int($byteNumber = $bit % 8)){
+        if ($bit % 8 == 0 && is_int($byteNumber = $bit % 8)) {
             var_dump($byteNumber);
             $val = $bytes[0] & 0xff;
-            while ($byteNumber++ < $byteNumber){
+            while ($byteNumber++ < $byteNumber) {
                 $val |= $bytes[$position + $byteNumber] & 0xff;
             }
         }
+        $this->updatePos();
         return $val;
     }
 
@@ -127,11 +138,36 @@ class ByteReader
      * @param string $byteString
      * @return array
      */
-    public static function readByteStringToArray(string $byteString) {
+    public static function readByteStringToArray(string $byteString)
+    {
         $bytesArray = [];
         array_map(function ($byte) use (&$bytesArray) {
             $bytesArray[] = $this->read($byte, self::BYTE_BIT);
         }, str_split($byteString));
         return $bytesArray;
+    }
+
+    /**
+     * @return void
+     */
+    public function updatePos()
+    {
+        // TODO: Implement getReadStream() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function getReadSequence(): string
+    {
+        // TODO: Implement getReadSequence() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function getReadStream(): string
+    {
+        // TODO: Implement getReadStream() method.
     }
 }

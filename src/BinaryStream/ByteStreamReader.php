@@ -35,4 +35,9 @@ class ByteStreamReader extends ByteReader
         $this->binaryReaderEntity->setPos($this->pos);
         unset($this->binaryReaderEntity);
     }
+
+    /**
+     * @return void
+     */
+    public function updatePos(){ $this->binaryReaderEntity->setPos($this->pos);}
 }

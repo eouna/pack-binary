@@ -8,7 +8,7 @@
 
 namespace BinaryStream;
 
-class BinaryReader implements StreamReader
+class BinaryReader implements IStreamReader
 {
 
     /**
@@ -175,7 +175,7 @@ class BinaryReader implements StreamReader
      * @return string $data
      * *@throws
      */
-    public function read(string $method, int $len = 0){
+    public function read($method, int $len = 0){
 
         $binaryData = substr($this->readStream, $this->pos, ($len ? $len : BinaryCode::$T[$method]));
 

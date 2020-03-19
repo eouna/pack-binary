@@ -9,7 +9,7 @@
 namespace BinaryStream;
 
 
-interface StreamWriter
+interface IStreamWriter
 {
     /**
      * @param $data

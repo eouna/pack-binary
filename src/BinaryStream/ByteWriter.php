@@ -9,7 +9,7 @@
 namespace BinaryStream;
 
 
-class ByteWriter implements StreamWriter
+class ByteWriter implements IStreamWriter
 {
 
     const BYTE_BIT = 8;
@@ -34,11 +34,15 @@ class ByteWriter implements StreamWriter
      * @throws Exception\BinaryException
      */
     public function writeBytes(array $bytesArray) {
+
         $binaryWriter = new BinaryWriter();
+
         array_map(function ($byte) use (&$outByteStr) {
             $outByteStr .= $this->writeByte($byte)->getWriteStream();
         }, $bytesArray);
+
         $this->binaryStream .= $binaryWriter->writeUTFString($outByteStr);
+
         return $this;
     }
 
@@ -138,9 +142,11 @@ class ByteWriter implements StreamWriter
      * @return self
      */
     public static function getBytesString(array $bytesArray) {
+
         array_map(function ($byte) use (&$outByteStr) {
             $outByteStr .= pack(BinaryCode::$N[BinaryCode::C], $byte & 0xff);
         }, $bytesArray);
+
         return $outByteStr;
     }
 }

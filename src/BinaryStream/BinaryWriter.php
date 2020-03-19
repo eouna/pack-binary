@@ -9,7 +9,7 @@
 namespace BinaryStream;
 use BinaryStream\Exception\BinaryException;
 
-class BinaryWriter implements StreamWriter
+class BinaryWriter implements IStreamWriter
 {
     /**
      * binary write or read model
@@ -72,11 +72,11 @@ class BinaryWriter implements StreamWriter
     }
 
     /**
-     * @param StreamWriter $byteWriter
+     * @param ByteWriter $byteWriter
      */
-    public function writeByteObject(StreamWriter $byteWriter){
+    public function writeByteObject(ByteWriter $byteWriter){
 
-        if($byteWriter instanceof StreamWriter){
+        if($byteWriter instanceof ByteWriter){
             $this->writeStream .= $byteWriter->getWriteStream();
             $this->recordSequence .= $byteWriter->getRecordSequence();
         }

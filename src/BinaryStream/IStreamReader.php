@@ -9,14 +9,14 @@
 namespace BinaryStream;
 
 
-interface StreamReader
+interface IStreamReader
 {
     /**
-     * @param $method
+     * @param mixed $method
      * @param $len
      * @return mixed
      */
-    public function read(string $method, int $len = 0);
+    public function read($method, int $len = 0);
 
     /**
      * @return string
@@ -27,4 +27,5 @@ interface StreamReader
      * @return string
      */
     public function getReadStream(): string;
+
 }
