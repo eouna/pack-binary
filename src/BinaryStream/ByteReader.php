@@ -70,15 +70,15 @@ class ByteReader implements IByteReader
     /**
      * @return int
      */
-    public function readShortToByte()
+    public function readBytesToShort()
     {
-        return $this->readInt16ToByte();
+        return $this->readBytesToInt16();
     }
 
     /**
      * @return int
      */
-    public function readInt16ToByte()
+    public function readBytesToInt16()
     {
         return $this->read(self::SHORT_BIT, BinaryCode::$T[BinaryCode::S]);
     }
@@ -86,7 +86,7 @@ class ByteReader implements IByteReader
     /**
      * @return int
      */
-    public function readInt32ToByte()
+    public function readByteToInt32()
     {
         return $this->read(self::INT32_BIT, BinaryCode::$T[BinaryCode::V]);
     }
@@ -94,7 +94,7 @@ class ByteReader implements IByteReader
     /**
      * @return int
      */
-    public function readInt64ToByte()
+    public function readBytesToInt64()
     {
         return $this->read(self::INT64_BIT, BinaryCode::$T[BinaryCode::Q]);
     }
@@ -122,12 +122,13 @@ class ByteReader implements IByteReader
     {
         $val = $i = 0;
         !is_string($bytes) ?: $bytes = str_split($bytes);
-        if ($bit % 8 == 0 && is_int($byteNumber = $bit % 8)) {
-            var_dump($byteNumber);
-            $val = $bytes[0] & 0xff;
-            while ($byteNumber++ < $byteNumber) {
-                $val |= $bytes[$position + $byteNumber] & 0xff;
-            }
+        if ($bit % 8 == 0 && is_int($byteNumber = $bit / 8)) {
+            $val = ord($bytes[--$byteNumber + $position]) & 0xff;
+            if($byteNumber == 0) return $val;
+            do{
+                $val <<= 8;
+                $val |= ord($bytes[--$byteNumber + $position]) & 0xff;
+            }while ($byteNumber > 0);
         }
         $this->updatePos();
         return $val;

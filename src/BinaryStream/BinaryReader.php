@@ -72,7 +72,7 @@ class BinaryReader implements IStreamReader
     /**
      * @return ByteStreamReader
      */
-    public function readByByteWriter(){
+    public function readByByteReader(){
         return new ByteStreamReader($this);
     }
 

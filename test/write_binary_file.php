@@ -6,6 +6,7 @@
  * Time: 15:31
  */
 
+use BinaryStream\ByteWriter;
 use BinaryStream\Exception\BinaryException;
 use BinaryStream\BinaryWriter;
 use BinaryStream\BinaryReader;
@@ -31,7 +32,16 @@ try{
     $writer->writeDouble(800);
     $writer->writeFloat(3.88511321334343434324443324321);
     $writer->writeDouble(148.3243413243132134343213244313132);
+    $writer->writeUTFString("Begin Write Byte Data!");
+    $byteWriter = new ByteWriter();
+    $byteWriter->writeByte(120);
+    $byteWriter->writeInt16ToByte(65530);
+    $byteWriter->writeInt32ToByte(1526456146);
+    $writer->writeByteObject($byteWriter);
+    $writer->writeUTFString("End Write");
+
     $write_sequence = $writer->store();
+    ////With File Append
     //$write_sequence = $writer->store(FILE_APPEND | LOCK_EX);
 
     //var_dump($writer->getWriteStream());        //get binary stream
@@ -55,6 +65,15 @@ try{
     $res[] = $reader->readDouble();
     $res[] = $reader->readFloat();
     $res[] = $reader->readDouble();
+
+    $res[] = $reader->readUTFString();
+    //read byte object
+    $byteReader = $reader->readByByteReader();
+    $res[] = $byteReader->readByte();
+    $res[] = $byteReader->readBytesToShort();
+    $res[] = $byteReader->readByteToInt32();
+    $res[] = $reader->readUTFString();
+
     var_dump($res);
 
 }catch (BinaryException $exception){

@@ -24,7 +24,8 @@ class ByteStreamReader extends ByteReader
     {
         parent::__construct($byteStream);
         $this->binaryReaderEntity = $byteStream;
-        $this->readStream = substr($byteStream->getReadStream(), 0, $byteStream->getPos());
+        $this->readStream = $byteStream->getReadStream();
+        $this->pos = $byteStream->getPos();
     }
 
     /**
@@ -32,7 +33,6 @@ class ByteStreamReader extends ByteReader
      */
     public function __destruct()
     {
-        $this->binaryReaderEntity->setPos($this->pos);
         unset($this->binaryReaderEntity);
     }
 
