@@ -1,5 +1,5 @@
 ### PHP Read AND Write Binary Stream Package 
-Binary Stream Packager - a tools to handle binary data
+Binary Stream Packager - a tools to handle binary data or stream
 
 - #### Manual
   
@@ -16,6 +16,11 @@ Binary Stream Packager - a tools to handle binary data
     $writer->writeFloat(3.88511321334343434324443324321);
     $writer->writeDouble(148.3243413243132134343213244313132);
     $writer->writeChar("s");
+    $byteWriter = new ByteWriter();
+    $byteWriter->writeByte(120);
+    $byteWriter->writeInt16ToByte(65530);
+    $byteWriter->writeInt32ToByte(1526456146);
+    $writer->writeByteObject($byteWriter);
   ````
  
   - **note**
@@ -49,8 +54,14 @@ Binary Stream Packager - a tools to handle binary data
     $res[] = $reader->readFloat();
     $res[] = $reader->readDouble();
     $res[] =  $reader->readChar();
+    $byteReader = $reader->readByByteReader();
+    $res[] = $byteReader->readByte();
+    $res[] = $byteReader->readBytesToShort();
+    $res[] = $byteReader->readByteToInt32();
     ````
 
 - #### How To Use It
->    <p style = "color: red;">use **composer require eouna/pack-binary** to install this package</p>
+>    use <p
+>    style="fontsize:16px;color:#156b39;background-color:#2e2e2e">***composer
+>    require eouna/pack-binary***</p> to install this package
 
