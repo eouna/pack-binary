@@ -9,7 +9,7 @@ Binary Stream Packager - a tools to handle binary data or stream
   ````php
     use BinaryStream\BinaryWriter;
     $writer = new BinaryWriter();
-    $writer->writeUTFString(  "it`s a sort string");
+    $writer->writeUTFString( str_repeat("It`s long string,", 200) );
     $writer->writeUTFString("");
     $writer->writeInt32(-90);
     $writer->writeDouble(800);

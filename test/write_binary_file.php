@@ -19,7 +19,7 @@ try{
 
     $writer = new BinaryWriter($file_name);
     $writer->setBinaryModel(BinaryCode::BIG_ENDIAN);
-    $writer->writeUTFString("it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! it`s a long string! ");
+    $writer->writeUTFString( str_repeat("It`s long string,", 200) );
     $writer->writeUTFString("");
     $writer->writeChar("s");
     $writer->writeByte(123);
@@ -32,13 +32,13 @@ try{
     $writer->writeDouble(800);
     $writer->writeFloat(3.88511321334343434324443324321);
     $writer->writeDouble(148.3243413243132134343213244313132);
-    $writer->writeUTFString("Begin Write Byte Data!");
+    $writer->writeUTFString("Begin Read Byte Object Data!");
     $byteWriter = new ByteWriter();
     $byteWriter->writeByte(120);
     $byteWriter->writeInt16ToByte(65530);
     $byteWriter->writeInt32ToByte(1526456146);
     $writer->writeByteObject($byteWriter);
-    $writer->writeUTFString("End Write");
+    $writer->writeUTFString("End Read");
 
     $write_sequence = $writer->store();
     ////With File Append

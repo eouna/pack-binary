@@ -109,6 +109,7 @@ class ByteReader implements IByteReader
         $bytes = substr($this->readStream, $this->pos, $len);
         $this->pos += $len;
         $this->recordSequence .= BinaryCode::$N[BinaryCode::C] . $len;
+        $this->updatePos();
         return $this->byteReader($bytes, $method);
     }
 
@@ -130,7 +131,6 @@ class ByteReader implements IByteReader
                 $val |= ord($bytes[--$byteNumber + $position]) & 0xff;
             }while ($byteNumber > 0);
         }
-        $this->updatePos();
         return $val;
     }
 
