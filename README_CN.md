@@ -1,11 +1,11 @@
 ### PHP Read AND Write Binary Stream Package 
-Binary Stream Packager - a tools to handle binary data or stream
+二进制流读写工具，封装了一些二进制常用的读写方法
 
-- #### [中文版](https://github.com/eouna/pack-binary/blob/master/README_CN.md)
+- #### [English Version](https://github.com/eouna/pack-binary/blob/master/README.md)
 
-- #### Manual
+- #### 使用说明
   
-  - ##### Write Stream Method
+  - ##### 读取二进制流的相关方法
 
   ````php
     use BinaryStream\BinaryWriter;
@@ -25,15 +25,16 @@ Binary Stream Packager - a tools to handle binary data or stream
   ````
  
  
-  - **note**
+  - **注：**
         
-    1. the default encode method is BIG ENDIAN you can use method ***<u>*setBinaryModel*</u>*** to change it
+    1. 程序默认的字节序是大端字节序你可以使用
+       ***<u>*setBinaryModel()*</u>*** 方法修改字节序
     
      ````php
       $write->setBinaryModel(BinaryCode::LITTLE_ENDIAN | BinaryCode::BIG_ENDIAN);
     `````
-    2. the default write flag to store file is ***FILE_BINARY*** you can
-       use method ***<u>*store*</u>*** to change it
+    2. 程序默认存储本地流文件的方式是 ***FILE_BINARY*** 你可以使用
+       ***<u>*store()*</u>*** 改变存储模式
  
     ````php
        $writer->store(FILE_APPEND);
@@ -43,9 +44,9 @@ Binary Stream Packager - a tools to handle binary data or stream
       $writer->store(FILE_APPEND | LOCK_EX);
     `````
 
-  - ##### Read Stream Method
+  - ##### 读取二进制流的方式
     
-    ###### the read sequence must match with the write sequence
+    ###### 注：读取顺序一定要匹配写入的顺序
     
     ````
     $reader = new BinaryReader($writer->getWriteStream());
@@ -63,8 +64,8 @@ Binary Stream Packager - a tools to handle binary data or stream
     $res[] = $byteReader->readByteToInt32();
     ````
 
-- #### How To Use It
->    use <p
+- #### 如何使用
+>    可以通过Composer命令 <p
 >    style="fontsize:16px;color:#156b39;background-color:#2e2e2e">***composer
->    require eouna/pack-binary***</p> to install this package
+>    require eouna/pack-binary***</p> 安装此工具包 
 
