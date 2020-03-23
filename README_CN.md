@@ -1,5 +1,5 @@
 ### PHP Read AND Write Binary Stream Package 
-二进制流读写工具，封装了一些二进制常用的读写方法
+二进制流读写工具，封装了一些常用的二进制读写方法
 
 - #### [English Version](https://github.com/eouna/pack-binary/blob/master/README.md)
 
