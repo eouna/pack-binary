@@ -7,7 +7,7 @@
   
   - ##### 读取二进制流的相关方法
 
-  ````php
+    ````php
     use BinaryStream\BinaryWriter;
     $writer = new BinaryWriter();
     $writer->writeUTFString( str_repeat("It`s long string,", 200) );
@@ -22,7 +22,7 @@
     $byteWriter->writeInt16ToByte(65530);
     $byteWriter->writeInt32ToByte(1526456146);
     $writer->writeByteObject($byteWriter);
-  ````
+    ````
  
  
   - **注：**
