@@ -7,7 +7,7 @@ Binary Stream Packager - a tools to handle binary data or stream
   
   - ##### Write Stream Method
 
-  ````php
+  	````php
     use BinaryStream\BinaryWriter;
     $writer = new BinaryWriter();
     $writer->writeUTFString( str_repeat("It`s long string,", 200) );
@@ -22,7 +22,7 @@ Binary Stream Packager - a tools to handle binary data or stream
     $byteWriter->writeInt16ToByte(65530);
     $byteWriter->writeInt32ToByte(1526456146);
     $writer->writeByteObject($byteWriter);
-  ````
+  	````
  
  
   - **note**
