@@ -1,4 +1,4 @@
-### PHP Read AND Write Binary Stream Package 
+### PHP Read And Write Binary Stream Package 
 Binary Stream Packager - a tools to handle binary data or stream
 
 - #### [中文版](https://github.com/eouna/pack-binary/blob/master/README_CN.md)
